@@ -6,15 +6,16 @@ import { prisma } from "./connectDB";
 declare module "next-auth" {
     interface Session extends DefaultSession{
         user: {
-            id: string
-        } & DefaultSession['user']
+            id: string;
+        } & DefaultSession['user'];
     }
 }
 
 declare module "next-auth/jwt" {
     interface JWT {
         id: string;
-        email: string
+        email: string;
+        token: string
     }
 }
 
@@ -23,6 +24,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID!,
@@ -30,18 +32,18 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    jwt: async({token}) => {
+    jwt: async ({ token }) => {
         const db_user = await prisma.user.findUnique({
             where: {
-                email: token?.email
-            }
-        })
+                email: token?.email,
+            },
+        });
         if(db_user) {
-            token?.id = db_user.id
+            token.id = db_user.id
         }
         return token
     },
-    session: async({session,token}) => {
+    session: ({ session,token }) => {
         if(token) {
             session.user.id = token.id
             session.user.name = token.name
@@ -52,3 +54,6 @@ export const authOptions: NextAuthOptions = {
     }
   }
 }
+
+
+export const getAuthSession = () => getServerSession(authOptions);
