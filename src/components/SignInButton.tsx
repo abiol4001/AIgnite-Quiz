@@ -8,12 +8,12 @@ type Props = {
     text: string
 }
 
-const SignInButton = ({text}: Props) => {
-  return (
-    <Button className='h-10 w-20 text-lg' onClick={()=> {
-          signIn('google').catch(console.error)
-    }}>{text}</Button>
-  )
+const SignInButton = ({ text }: Props) => {
+    return (
+        <Button className='h-10 w-20 text-lg' onClick={() => {
+            signIn('google', { callbackUrl: 'http://localhost:3000' }).catch(console.error)
+        }}>{text}</Button>
+    )
 }
 
 export default SignInButton
