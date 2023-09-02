@@ -2,8 +2,8 @@ import { cn } from '@/lib/utils'
 import './global.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import AuthProvider from '@/lib/AuthProvider'
 import Navbar from '@/components/Navbar'
+import Providers from '@/lib/Providers'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,11 +18,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    // <AuthProvider>
-    <html lang="en">
-      <Navbar />
-      <body className={cn(inter.className, "antialiased min-h-screen")}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn(inter.className, "antialiased min-h-screen")}>
+        <Providers>
+          <Navbar />
+          {children}
+        </Providers>
+      </body>
     </html>
-    // </AuthProvider>
   )
 }
