@@ -10,7 +10,7 @@ type Props = {
 
 const SignInButton = ({ text }: Props) => {
     return (
-        <Button className='h-10 w-20 text-lg' onClick={() => {
+        <Button className='h-14 w-fit' onClick={() => {
             signIn('google')
         }}>{text}</Button>
     )

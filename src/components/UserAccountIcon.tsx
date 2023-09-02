@@ -18,7 +18,8 @@ const UserAccountIcon = ({ user }: Props) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <UserAvatar user={user} />
+                {/* <UserAvatar user={user} /> */}
+                <div><UserAvatar user={user} /></div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className='bg-white' align='end'>
                 <div className='flex justify-start items-center p-2 gap-2'>

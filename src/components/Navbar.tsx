@@ -14,8 +14,8 @@ const Navbar = async (props: Props) => {
     //     return <pre>{JSON.stringify(session.user, null, 2)}</pre>
     // }
     return (
-        <div className='fixed h-[90px] inset-x-0 top-0 bg-white dark:bg-gray-950 z-[10] border-b border-x-zinc-300'>
-            <div className='flex items-center justify-between jb h-full gap-2 px-8 mx-auto max-w-7xl'>
+        <div className='fixed h-fit py-6 inset-x-0 top-0 bg-white dark:bg-gray-950 z-[10] border-b border-x-zinc-300'>
+            <div className='flex items-center justify-between jb h-full gap-2 px-8 lg:px-0 mx-auto max-w-7xl'>
 
                 {/* Site Logo */}
                 <Link href="/" className='hover:-translate-y-[1px] duration-200'>
