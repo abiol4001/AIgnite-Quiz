@@ -41,7 +41,7 @@ const WordCloud = (props: Props) => {
     const theme = useTheme()
     return (
         <div>
-            <D3WordCloud data={data} height={550} font="Times" fontSize={fontSizeMapper} rotate={0} padding={10} fill={theme.theme === "dark" ? "white" : "black"} />
+            <D3WordCloud data={data} height={550} font="Times" fontSize={fontSizeMapper} rotate={0} padding={10} fill={theme.theme === "dark" || theme.theme === "system" ? "white" : "black"} />
         </div>
     )
 }
