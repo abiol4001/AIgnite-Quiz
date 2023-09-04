@@ -28,7 +28,7 @@ const Navbar = async (props: Props) => {
                         {session?.user ? (
                             <UserAccountIcon user={session.user} />
                         ) : (
-                            <SignInButton text='Login' />
+                            <SignInButton text='Login' height={10} />
                         )}
                     </div>
                 </div>

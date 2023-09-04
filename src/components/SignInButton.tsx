@@ -6,11 +6,12 @@ import { signIn } from 'next-auth/react'
 
 type Props = {
     text: string
+    height: number
 }
 
-const SignInButton = ({ text }: Props) => {
+const SignInButton = ({ text, height=10 }: Props) => {
     return (
-        <Button className='h-14 w-fit' onClick={() => {
+        <Button className={`h-${height} w-fit`} onClick={() => {
             signIn('google')
         }}>{text}</Button>
     )

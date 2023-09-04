@@ -21,11 +21,11 @@ const UserAccountIcon = ({ user }: Props) => {
                 {/* <UserAvatar user={user} /> */}
                 <div><UserAvatar user={user} /></div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className='bg-white' align='end'>
+            <DropdownMenuContent className='bg-white dark:bg-black' align='end'>
                 <div className='flex justify-start items-center p-2 gap-2'>
                     <div className='flex flex-col space-y-1 leading-none'>
-                        {user.name && <p className='font-medium'>{user.name}</p>}
-                        {user.email && <p className='w-[200px] truncate text-sm'>{user.email}</p>}
+                        {user.name && <p className='font-medium dark:text-white'>{user.name}</p>}
+                        {user.email && <p className='w-[200px] truncate text-sm dark:text-white'>{user.email}</p>}
                     </div>
                 </div>
                 {/* <p className='font-medium'>Welcome, <span className='font-light'>{user.name}</span></p> */}
