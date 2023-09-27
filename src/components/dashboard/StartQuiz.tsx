@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { BrainCog, BrainIcon } from 'lucide-react'
+import { BrainIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 type Props = {}

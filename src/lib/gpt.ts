@@ -1,8 +1,7 @@
 import OpenAI from "openai";
 
-
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 interface OutputFormat {
@@ -19,7 +18,12 @@ export async function strict_output(
   temperature: number = 1,
   num_tries: number = 3,
   verbose: boolean = false
-) {
+): Promise<
+  {
+    question: string;
+    answer: string;
+  }[]
+> {
   // if the user input is in a list, we also process the output as a list of json
   const list_input: boolean = Array.isArray(user_prompt);
   // if the output format contains dynamic elements of < or >, then add to the prompt to handle dynamic elements
@@ -31,9 +35,7 @@ export async function strict_output(
   let error_msg: string = "";
 
   for (let i = 0; i < num_tries; i++) {
-    let output_format_prompt: string = `\nYou are to output ${
-      list_output && "an array of objects in"
-    } the following in json format: ${JSON.stringify(
+    let output_format_prompt: string = `\nYou are to output the following in json format: ${JSON.stringify(
       output_format
     )}. \nDo not put quotation marks or escape character \\ in the output fields.`;
 
@@ -48,7 +50,7 @@ export async function strict_output(
 
     // if input is in a list format, ask it to generate json in a list
     if (list_input) {
-      output_format_prompt += `\nGenerate an array of json, one json for each input element.`;
+      output_format_prompt += `\nGenerate a list of json, one json for each input element.`;
     }
 
     // Use OpenAI to get a response
@@ -85,7 +87,7 @@ export async function strict_output(
 
       if (list_input) {
         if (!Array.isArray(output)) {
-          throw new Error("Output format not in an array of json");
+          throw new Error("Output format not in a list of json");
         }
       } else {
         output = [output];
@@ -135,8 +137,8 @@ export async function strict_output(
       return list_input ? output : output[0];
     } catch (e) {
       error_msg = `\n\nResult: ${res}\n\nError message: ${e}`;
-      console.log("An exception occurred:", e);
-      console.log("Current invalid json format ", res);
+      console.error("An exception occurred:", e);
+      console.error("Current invalid json format:", res);
     }
   }
 

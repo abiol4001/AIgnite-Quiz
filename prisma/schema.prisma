@@ -65,7 +65,7 @@ model Game {
   topic       String
   gameType    GameType
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Question Question[]
+  questions Question[]
 
   @@index([userId], name: "userId")
 }
@@ -76,6 +76,7 @@ model Question {
   answer String
   gameId String
   options Json?
+  isCorrect Boolean?
   percentageCorrect Float?
   questionType GameType
   userAnswer String?
