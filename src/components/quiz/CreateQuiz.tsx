@@ -34,7 +34,7 @@ const CreateQuiz = () => {
         defaultValues: {
             amount: 10,
             topic: "",
-            type: "open_ended"
+            type: "mcq"
         }
     })
 
