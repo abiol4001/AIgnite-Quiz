@@ -103,7 +103,7 @@ const CreateQuiz = () => {
                                 {/* <LucideSeparatorVertical orientation={"vertical"} /> */}
                                 <Button type='button' className='rounded-none rounded-r-lg h-14' onClick={() => form.setValue('type', 'open_ended')} variant={form.getValues('type') === 'open_ended' ? "default" : "secondary"}> <BookOpen className='mr-1' /> Open Ended</Button>
                             </div>
-                            <Button disabled={isLoading} type="submit">Submit</Button>
+                            <Button disabled={isLoading} className='h-14' type="submit">Submit</Button>
                         </form>
                     </Form>
                 </CardContent>
