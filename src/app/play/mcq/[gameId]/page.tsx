@@ -11,30 +11,29 @@ type Props = {
 }
 
 const Mcq = async ({ params: {gameId}}: Props) => {
-    const session = await getAuthSession()
-    if(!session?.user) {
-        return redirect('/')
+    const session = await getAuthSession();
+    if (!session?.user) {
+        return redirect("/");
     }
 
     const game = await prisma.game.findUnique({
         where: {
-            id: gameId
+            id: gameId,
         },
         include: {
-            Question: {
+            questions: {
                 select: {
                     id: true,
                     question: true,
-                    options: true
-                }
-            }
-        }
-    })
-    if(!game || game.gameType === 'open_ended') {
-        return redirect('/quiz')
+                    options: true,
+                },
+            },
+        },
+    });
+    if (!game || game.gameType === "open_ended") {
+        return redirect("/quiz");
     }
-    return <MCQ game={{ ...game, questions: game.Question }} />;
-
+    return <MCQ game={game} />;
 }
 
 export default Mcq
