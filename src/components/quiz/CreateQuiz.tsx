@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
-import { Book, BookOpen, CopyCheck, LucideSeparatorVertical, OptionIcon, SeparatorVertical, SeparatorVerticalIcon } from 'lucide-react'
+import { Book, BookOpen, CopyCheck, Loader2, LucideSeparatorVertical, OptionIcon, SeparatorVertical, SeparatorVerticalIcon } from 'lucide-react'
 import { useMutation } from "@tanstack/react-query"
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
@@ -103,7 +103,7 @@ const CreateQuiz = () => {
                                 {/* <LucideSeparatorVertical orientation={"vertical"} /> */}
                                 <Button type='button' className='rounded-none rounded-r-lg h-14' onClick={() => form.setValue('type', 'open_ended')} variant={form.getValues('type') === 'open_ended' ? "default" : "secondary"}> <BookOpen className='mr-1' /> Open Ended</Button>
                             </div>
-                            <Button disabled={isLoading} className='h-14' type="submit">Submit</Button>
+                            <Button disabled={isLoading} className='h-14' type="submit">{isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Submit</Button>
                         </form>
                     </Form>
                 </CardContent>

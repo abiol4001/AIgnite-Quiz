@@ -24,6 +24,7 @@ const MCQ = ({ game }: Props) => {
         wrong_answers: 0,
     })
     const [now, setNow] = useState(new Date());
+    const [gameEnded, setGameEnded] = useState(false)
 
     const currentQuestion = useMemo(()=> {
         return game.questions[questionIndex]
@@ -44,6 +45,7 @@ const MCQ = ({ game }: Props) => {
 
             };
             const response = await axios.post(`/api/checkAnswer`, payload);
+            setSelectedChoice(null)
             return response.data;
         },
     });
@@ -57,6 +59,11 @@ const MCQ = ({ game }: Props) => {
                     }))
                 } else {
                     setStats((stats) => ({...stats, wrong_answers: stats.wrong_answers + 1}))
+                }
+
+                if (questionIndex === game.questions.length - 1) {
+                    setGameEnded(true);
+                    return;
                 }
 
                 setQuestionIndex((questionIndex) => questionIndex + 1);
