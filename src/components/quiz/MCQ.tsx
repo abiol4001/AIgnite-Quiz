@@ -2,10 +2,14 @@
 
 import { Game, Question } from '@prisma/client'
 import { ChevronRight, Loader2, Timer } from 'lucide-react';
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Button } from '../ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import MCQCounter from './MCQCounter';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import { checkAnswerSchema } from '@/schemas/questions';
+import { string, z } from 'zod';
 
 type Props = {
     game: Game & { questions: Pick<Question, "id" | "options" | "question">[] };
@@ -14,7 +18,12 @@ type Props = {
 const MCQ = ({ game }: Props) => {
 
     const [questionIndex, setQuestionIndex] = useState(0)
-    const [selectedChoice, setSelectedChoice] = useState(0);
+    const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
+    const [stats, setStats] = useState({
+        correct_answers: 0,
+        wrong_answers: 0,
+    })
+    const [now, setNow] = useState(new Date());
 
     const currentQuestion = useMemo(()=> {
         return game.questions[questionIndex]
@@ -25,6 +34,36 @@ const MCQ = ({ game }: Props) => {
         if(!currentQuestion.options) return []
         return JSON.parse(currentQuestion.options as string) as string[]
     }, [currentQuestion])
+
+
+    const { mutate: checkAnswer, isLoading: isChecking } = useMutation({
+        mutationFn: async () => {
+            const payload: z.infer<typeof checkAnswerSchema> = {
+                questionId: currentQuestion.id,
+                userInput: selectedChoice !== null ? options[selectedChoice] : "",
+
+            };
+            const response = await axios.post(`/api/checkAnswer`, payload);
+            return response.data;
+        },
+    });
+
+    const handleNext = useCallback(() => {
+        checkAnswer(undefined, {
+            onSuccess: ({ isCorrect }) => {
+                if (isCorrect) {
+                    setStats((stats) => ({
+                        ...stats, correct_answers: stats.correct_answers + 1,
+                    }))
+                } else {
+                    setStats((stats) => ({...stats, wrong_answers: stats.wrong_answers + 1}))
+                }
+
+                setQuestionIndex((questionIndex) => questionIndex + 1);
+                setSelectedChoice(null)
+            }
+        })
+    }, [checkAnswer, questionIndex, game.questions.length])
   
     
     return (
@@ -44,10 +83,8 @@ const MCQ = ({ game }: Props) => {
                     </div>
                 </div>
                 <MCQCounter
-                    correct_answers={1}
-                    wrong_answers={1}
-                    // correct_answers={stats.correct_answers}
-                    // wrong_answers={stats.wrong_answers}
+                    correct_answers={stats.correct_answers}
+                    wrong_answers={stats.wrong_answers}
                 />
             </div>
             <Card className="w-full mt-4">
@@ -80,18 +117,18 @@ const MCQ = ({ game }: Props) => {
                         </Button>
                     )
                 )}
-                {/* <Button
+                <Button
                     variant="default"
                     className="mt-2"
                     size="lg"
-                    disabled={isChecking || hasEnded}
+                    disabled={isChecking}
                     onClick={() => {
                         handleNext();
                     }}
                 >
                     {isChecking && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                     Next <ChevronRight className="w-4 h-4 ml-2" />
-                </Button> */}
+                </Button>
             </div>
         </div>
     );
