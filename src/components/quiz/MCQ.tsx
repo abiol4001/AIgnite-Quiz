@@ -53,6 +53,7 @@ const MCQ = ({ game }: Props) => {
     const handleNext = useCallback(() => {
         checkAnswer(undefined, {
             onSuccess: ({ isCorrect }) => {
+                setSelectedChoice(null)
                 if (isCorrect) {
                     setStats((stats) => ({
                         ...stats, correct_answers: stats.correct_answers + 1,
