@@ -1,11 +1,11 @@
 "use client"
 
-import { checkAnswerSchema } from '@/schemas/questions';
+import { checkAnswerSchema, endGameSchema } from '@/schemas/questions';
 import { Game, Question } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { z } from 'zod';
 import { Button, buttonVariants } from '../ui/button';
 import { cn, formatTimeDelta } from '@/lib/utils';
@@ -14,6 +14,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { differenceInSeconds } from "date-fns"
 import OpenEndedPercentage from './OpenEndedPercentage';
 import BlankAnswerInput from './BlankAnswerInput';
+import { toast } from '../ui/use-toast';
 
 type Props = {
     game: Game & { questions: Pick<Question, "id" | "question" | "answer">[] };
@@ -35,7 +36,9 @@ const OpenEnded = ({game}: Props) => {
             let filledAnswer = blankAnswer;
             document.querySelectorAll<HTMLInputElement>("#user-blank-input").forEach((input) => {
                 filledAnswer = filledAnswer.replace("_____", input.value);
-                input.value = "";
+                setTimeout(() => {
+                    input.value = "";
+                }, 2700);
             });
             const payload: z.infer<typeof checkAnswerSchema> = {
                 questionId: currentQuestion.id,
@@ -54,6 +57,56 @@ const OpenEnded = ({game}: Props) => {
             return () => clearInterval(interval);
         }
     }, [hasEnded]);
+
+    const { mutate: endGame } = useMutation({
+        mutationFn: async () => {
+            const payload: z.infer<typeof endGameSchema> = {
+                gameId: game.id,
+            };
+            const response = await axios.post(`/api/endGame`, payload);
+            return response.data;
+        },
+    });
+
+    const handleNext = useCallback(() => {
+        checkAnswer(undefined, {
+            onSuccess: ( {percentageSimilar} ) => {
+                toast({
+                    title: `Your answer is ${percentageSimilar}% similar to the correct answer`
+                });
+                setAveragePercentage((prev) => {
+                    return Math.round((prev + percentageSimilar) / (questionIndex + 1))
+                })
+                if (questionIndex === game.questions.length - 1) {
+                    endGame();
+                    setHasEnded(true);
+                    return;
+                }
+                setQuestionIndex((prev) => prev + 1);
+            },
+            onError: (error) => {
+                console.log(error)
+                toast({
+                    title: "Something went wrong",
+                    variant: "destructive"
+                })
+            }
+        })
+    }, [checkAnswer, questionIndex, game.questions.length, endGame])
+
+    useEffect(()=> {
+        const handleKeydown = (event: KeyboardEvent) => {
+            const key = event.key
+            if(key === 'Enter') {
+                handleNext()
+            }
+            document.addEventListener("keydown", handleKeydown)
+
+            return () => {
+                document.removeEventListener("keydown", handleKeydown)
+            }
+        }
+    }, [handleNext])
 
 
     if (hasEnded) {
@@ -115,7 +168,7 @@ const OpenEnded = ({game}: Props) => {
                   className="mt-4"
                   disabled={isChecking || hasEnded}
                   onClick={() => {
-                    //   handleNext();
+                      handleNext();
                   }}
               >
                   {isChecking && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
