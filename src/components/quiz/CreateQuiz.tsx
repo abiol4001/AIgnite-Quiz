@@ -58,6 +58,9 @@ const CreateQuiz = () => {
                         router.push(`/play/mcq/${gameId}`)
                     }
                 }, 1000);
+            },
+            onError: () => {
+                setShowLoader(false)
             }
         })
     }

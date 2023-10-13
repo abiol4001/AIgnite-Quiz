@@ -39,6 +39,15 @@ const MCQ = ({ game }: Props) => {
         return JSON.parse(currentQuestion.options as string) as string[]
     }, [currentQuestion])
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (!hasEnded) {
+                setNow(new Date());
+            }
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [hasEnded]);
+
 
     const { mutate: checkAnswer, isLoading: isChecking } = useMutation({
         mutationFn: async () => {
@@ -58,7 +67,7 @@ const MCQ = ({ game }: Props) => {
             const payload: z.infer<typeof endGameSchema> = {
                 gameId: game.id,
             };
-            const response = await axios.post(`/api/endGame`, payload);
+            const response = await axios.post(`/api/endQuiz`, payload);
             return response.data;
         },
     });
@@ -142,7 +151,7 @@ const MCQ = ({ game }: Props) => {
                     </p>
                     <div className="flex self-start mt-3 text-slate-400">
                         <Timer className="mr-2" />
-                        {/* {formatTimeDelta(differenceInSeconds(now, game.timeStarted))} */}
+                        {formatTimeDelta(differenceInSeconds(now, game.timeStarted))}
                     </div>
                 </div>
                 <MCQCounter

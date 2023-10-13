@@ -27,6 +27,8 @@ const Statistics = async ({params: { gameId }}: Props) => {
     include: { questions: true },
   });
 
+  console.log(game?.timeStarted)
+  console.log(game?.timeEnded)
   if (!game) {
     return redirect("/");
   }
@@ -34,12 +36,12 @@ const Statistics = async ({params: { gameId }}: Props) => {
   let accuracy = 76
   return (
     <>
-      <div className="p-8 mx-auto max-w-7xl">
+      <div className="p-8 mx-auto max-w-7xl mt-20">
         <div className="flex items-center justify-between space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">Summary</h2>
+          <h2 className="text-xl md:text-3xl font-bold tracking-tight">Summary</h2>
           <div className="flex items-center space-x-2">
             <Link href="/dashboard" className={buttonVariants()}>
-              <LucideLayoutDashboard className="mr-2" />
+              <LucideLayoutDashboard className="mr-2 w-fit" />
               Back to Dashboard
             </Link>
           </div>
