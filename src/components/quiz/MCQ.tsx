@@ -1,15 +1,18 @@
 "use client"
 
 import { Game, Question } from '@prisma/client'
-import { ChevronRight, Loader2, Timer } from 'lucide-react';
-import React, { useCallback, useMemo, useState } from 'react'
-import { Button } from '../ui/button';
+import { BarChart, ChevronRight, Loader2, Timer } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Button, buttonVariants } from '../ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import MCQCounter from './MCQCounter';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { checkAnswerSchema } from '@/schemas/questions';
+import { checkAnswerSchema, endGameSchema } from '@/schemas/questions';
 import { string, z } from 'zod';
+import Link from 'next/link';
+import { cn, formatTimeDelta } from '@/lib/utils';
+import { differenceInSeconds } from 'date-fns';
 
 type Props = {
     game: Game & { questions: Pick<Question, "id" | "options" | "question">[] };
@@ -24,7 +27,7 @@ const MCQ = ({ game }: Props) => {
         wrong_answers: 0,
     })
     const [now, setNow] = useState(new Date());
-    const [gameEnded, setGameEnded] = useState(false)
+    const [hasEnded, setHasEnded] = useState(false)
 
     const currentQuestion = useMemo(()=> {
         return game.questions[questionIndex]
@@ -50,6 +53,16 @@ const MCQ = ({ game }: Props) => {
         },
     });
 
+    const { mutate: endGame } = useMutation({
+        mutationFn: async () => {
+            const payload: z.infer<typeof endGameSchema> = {
+                gameId: game.id,
+            };
+            const response = await axios.post(`/api/endGame`, payload);
+            return response.data;
+        },
+    });
+
     const handleNext = useCallback(() => {
         checkAnswer(undefined, {
             onSuccess: ({ isCorrect }) => {
@@ -63,7 +76,8 @@ const MCQ = ({ game }: Props) => {
                 }
 
                 if (questionIndex === game.questions.length - 1) {
-                    setGameEnded(true);
+                    endGame()
+                    setHasEnded(true);
                     return;
                 }
 
@@ -71,9 +85,50 @@ const MCQ = ({ game }: Props) => {
                 setSelectedChoice(null)
             }
         })
-    }, [checkAnswer, questionIndex, game.questions.length])
+    }, [checkAnswer, questionIndex, game.questions.length, endGame])
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            const key = event.key;
+
+            if (key === "1") {
+                setSelectedChoice(0);
+            } else if (key === "2") {
+                setSelectedChoice(1);
+            } else if (key === "3") {
+                setSelectedChoice(2);
+            } else if (key === "4") {
+                setSelectedChoice(3);
+            } else if (key === "Enter") {
+                handleNext();
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [handleNext]);
   
-    
+    if (hasEnded) {
+        return (
+            <div className="absolute flex flex-col justify-center -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+                <div className="px-4 py-2 mt-2 font-semibold text-white bg-green-500 rounded-md whitespace-nowrap">
+                    You Completed in{" "}
+                    {formatTimeDelta(differenceInSeconds(now, game.timeStarted))}
+                </div>
+                <Link
+                    href={`/statistics/${game.id}`}
+                    className={cn(buttonVariants({ size: "lg" }), "mt-2")}
+                >
+                    View Statistics
+                    <BarChart className="w-4 h-4 ml-2" />
+                </Link>
+            </div>
+        );
+    }
+
     return (
         <div className="absolute -translate-x-1/2 -translate-y-1/2 md:w-[80vw] max-w-4xl w-[90vw] top-1/2 left-1/2">
             <div className="flex flex-row justify-between">

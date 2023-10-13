@@ -31,7 +31,7 @@ const Statistics = async ({params: { gameId }}: Props) => {
     return redirect("/");
   }
 
-  let accuracy = 75
+  let accuracy = 76
   return (
     <>
       <div className="p-8 mx-auto max-w-7xl">

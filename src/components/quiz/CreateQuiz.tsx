@@ -2,7 +2,7 @@
 
 import { quizCreationSchema } from '@/schemas/form/quiz'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -13,10 +13,14 @@ import { Book, BookOpen, CopyCheck, Loader2, LucideSeparatorVertical, OptionIcon
 import { useMutation } from "@tanstack/react-query"
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import LoadingQuestions from '../LoadingQuestions'
 
 type Input = z.infer<typeof quizCreationSchema>
 
 const CreateQuiz = () => {
+
+    const [showLoader, setShowLoader] = useState(false)
+    const [finished, setFinished] = useState(false)
 
     const router = useRouter()
 
@@ -39,22 +43,30 @@ const CreateQuiz = () => {
     })
 
     const onSubmit = (input: Input) => {
+        setShowLoader(true)
         getQuestions({
             amount: input.amount,
             type: input.type,
             topic: input.topic,
         }, {
             onSuccess: ({gameId}) => {
-                if (form.getValues('type') === 'open_ended') {
-                    router.push(`/play/open-ended/${gameId}`)
-                } else {
-                    router.push(`/play/mcq/${gameId}`)
-                }
+                setFinished(true)
+                setTimeout(() => {
+                    if (form.getValues('type') === 'open_ended') {
+                        router.push(`/play/open-ended/${gameId}`)
+                    } else {
+                        router.push(`/play/mcq/${gameId}`)
+                    }
+                }, 1000);
             }
         })
     }
 
     form.watch()
+
+    if(showLoader) {
+        return <LoadingQuestions finished={finished} />
+    }
 
     return (
         <div className='absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'>
