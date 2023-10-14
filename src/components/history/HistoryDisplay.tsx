@@ -20,7 +20,7 @@ const HistoryDisplay = async ({limit, userId}: Props) => {
     })
 
   return (
-    <div className='flex flex-col gap-2'>
+    <div className='flex flex-col gap-4'>
           {games.map((game) => {
               return (
                   <div className="flex items-center justify-between" key={game.id}>
@@ -39,7 +39,7 @@ const HistoryDisplay = async ({limit, userId}: Props) => {
                               </Link>
                               <p className="flex items-center px-2 py-1 text-xs text-white rounded-lg w-fit bg-slate-800">
                                   <Clock1 className="w-4 h-4 mr-1" />
-                                  {new Date(game.timeEnded ?? 0).toLocaleDateString()}
+                                  {new Date(game.timeStarted ?? 0).toLocaleDateString()}
                               </p>
                               <p className="text-sm text-muted-foreground">
                                   {game.gameType === "mcq" ? "Multiple Choice" : "Open-Ended"}

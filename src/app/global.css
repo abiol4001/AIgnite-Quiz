@@ -79,3 +79,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+.underline-text {
+  text-decoration: underline;
+  cursor: pointer;
+}

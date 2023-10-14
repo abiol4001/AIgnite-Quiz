@@ -29,6 +29,22 @@ export async function POST(req: Request, res: Response) {
             }
         })
 
+        // Making count for each topic
+        await prisma.topic_count.upsert({
+            where: {
+                topic
+            },
+            create: {
+                topic,
+                count: 1
+            },
+            update: {
+                count: {
+                    increment: 1
+                }
+            }
+        })
+
         const {data} = await axios.post(`${process.env.BASE_URL}/api/questions`, {
             amount,
             topic,

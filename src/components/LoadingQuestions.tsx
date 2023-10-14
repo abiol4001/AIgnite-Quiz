@@ -39,9 +39,9 @@ const LoadingQuestions = ({finished}: Props) => {
             setProgress(prev => {
                 if(finished) return prev = 100
                 if(prev >= 100) return prev = 0
-                if(Math.random() < 0.1) return prev + 2
+                if(Math.random() < 0.1) return prev + 1
 
-                return prev + 0.5
+                return prev + 0.2
             })
         },100)
         return ()=> clearInterval(interval)

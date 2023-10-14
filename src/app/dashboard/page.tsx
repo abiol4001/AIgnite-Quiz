@@ -19,7 +19,7 @@ const Dashboard = async (props: Props) => {
         return redirect('/')
     }
   return (
-    <main className='pt-32 mx-auto max-w-7xl'>
+    <main className='pt-[100px] mx-auto max-w-7xl'>
         <div>
             <h2 className='font-extrabold text-3xl'>Dashboard</h2>
         </div>

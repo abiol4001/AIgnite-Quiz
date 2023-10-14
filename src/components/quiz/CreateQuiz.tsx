@@ -17,7 +17,11 @@ import LoadingQuestions from '../LoadingQuestions'
 
 type Input = z.infer<typeof quizCreationSchema>
 
-const CreateQuiz = () => {
+type Props = {
+    topicParam: string
+}
+
+const CreateQuiz = ({topicParam}: Props) => {
 
     const [showLoader, setShowLoader] = useState(false)
     const [finished, setFinished] = useState(false)
@@ -37,7 +41,7 @@ const CreateQuiz = () => {
         resolver: zodResolver(quizCreationSchema),
         defaultValues: {
             amount: 10,
-            topic: "",
+            topic: topicParam,
             type: "mcq"
         }
     })
