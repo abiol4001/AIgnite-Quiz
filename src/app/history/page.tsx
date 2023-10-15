@@ -10,7 +10,7 @@ import { buttonVariants } from '@/components/ui/button';
 type Props = {}
 
 export const metadata = {
-    title: "Dashboard | AIgnite"
+    title: "History | AIgnite"
 }
 
 const HistoryPage = async (props: Props) => {

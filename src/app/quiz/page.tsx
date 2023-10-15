@@ -10,7 +10,7 @@ type Props = {
 }
 
 export const metadata = {
-    title: "Dashboard | AIgnite"
+    title: "Initiate Quiz | AIgnite"
 }
 
 const QuizPage = async ({ searchParams }: Props) => {

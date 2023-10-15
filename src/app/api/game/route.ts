@@ -45,11 +45,14 @@ export async function POST(req: Request, res: Response) {
             }
         })
 
-        const {data} = await axios.post(`${process.env.BASE_URL}/api/questions`, {
+        const { data } = await axios.post(
+          `https://aignite-quiz.vercel.app/api/questions`,
+          {
             amount,
             topic,
-            type
-        })
+            type,
+          }
+        );
         if (type === 'mcq') {
             type mcqQuestion = {
                 question: string,
