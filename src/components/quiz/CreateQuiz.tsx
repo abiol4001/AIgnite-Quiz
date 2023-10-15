@@ -9,11 +9,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
-import { Book, BookOpen, CopyCheck, Loader2, LucideSeparatorVertical, OptionIcon, SeparatorVertical, SeparatorVerticalIcon } from 'lucide-react'
+import { BookOpen, CopyCheck, Loader2, } from 'lucide-react'
 import { useMutation } from "@tanstack/react-query"
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 import LoadingQuestions from '../LoadingQuestions'
+import { toast } from '../ui/use-toast'
 
 type Input = z.infer<typeof quizCreationSchema>
 
@@ -46,7 +47,7 @@ const CreateQuiz = ({topicParam}: Props) => {
         }
     })
 
-    const onSubmit = (input: Input) => {
+    const onSubmit = async (input: Input) => {
         setShowLoader(true)
         getQuestions({
             amount: input.amount,
@@ -61,10 +62,19 @@ const CreateQuiz = ({topicParam}: Props) => {
                     } else {
                         router.push(`/play/mcq/${gameId}`)
                     }
-                }, 1000);
+                }, 2000);
             },
-            onError: () => {
+            onError: (error) => {
                 setShowLoader(false)
+                if (error instanceof AxiosError) {
+                    if (error.response?.status === 500) {
+                        toast({
+                            title: "Error",
+                            description: "Something went wrong. Please try again later.",
+                            variant: "destructive",
+                        });
+                    }
+                }
             }
         })
     }

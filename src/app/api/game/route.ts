@@ -46,7 +46,7 @@ export async function POST(req: Request, res: Response) {
         })
 
         const { data } = await axios.post(
-          `https://aignite-quiz.vercel.app/api/questions`,
+          `${process.env.BASE_URL as string}/api/questions`,
           {
             amount,
             topic,
