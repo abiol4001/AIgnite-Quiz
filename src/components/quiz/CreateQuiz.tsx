@@ -48,7 +48,7 @@ const CreateQuiz = ({topicParam}: Props) => {
     })
 
     const onSubmit = async (input: Input) => {
-        console.log(process.env.API_URL)
+        console.log(process.env.NEXT_PUBLIC_API_URL)
         setShowLoader(true)
         getQuestions({
             amount: input.amount,

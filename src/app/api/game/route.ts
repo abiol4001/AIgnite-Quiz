@@ -53,6 +53,7 @@ export async function POST(req: Request, res: Response) {
             type,
           }
         );
+        console.log("Passed questions API")
         if (type === 'mcq') {
             type mcqQuestion = {
                 question: string,
