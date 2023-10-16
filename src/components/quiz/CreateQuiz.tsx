@@ -31,7 +31,7 @@ const CreateQuiz = ({topicParam}: Props) => {
 
     const {mutate: getQuestions, isLoading } = useMutation({
         mutationFn:async ({amount, topic, type}:Input) => {
-            const response = await axios.post(`${process.env.API_URL}/api/game`, {
+            const response = await axios.post(`/api/game`, {
                 amount, topic, type
             })
             return response.data
