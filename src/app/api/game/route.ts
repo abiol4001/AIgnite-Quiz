@@ -46,7 +46,7 @@ export async function POST(req: Request, res: Response) {
         })
 
         const { data } = await axios.post(
-          `${process.env.BASE_URL as string}/api/questions`,
+          `${process.env.API_URL as string}/api/questions`,
           {
             amount,
             topic,
@@ -97,7 +97,8 @@ export async function POST(req: Request, res: Response) {
                 data: manyData
             })
         }
-        return NextResponse.json({gameId: game.id})
+        return NextResponse.json({ gameId: game.id }, { status: 200 });
+
     } catch (error) {
         if(error instanceof ZodError) {
             return NextResponse.json({error: error.issues}, {status: 400})
