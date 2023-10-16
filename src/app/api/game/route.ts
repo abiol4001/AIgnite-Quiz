@@ -45,6 +45,7 @@ export async function POST(req: Request, res: Response) {
             }
         })
 
+        console.log("About to test questions API")
         const { data } = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL as string}/api/questions`,
           {
