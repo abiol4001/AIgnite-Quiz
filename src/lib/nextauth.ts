@@ -2,7 +2,6 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import {
   DefaultSession,
   NextAuthOptions,
-  User,
   getServerSession,
 } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
@@ -14,6 +13,9 @@ declare module "next-auth" {
       id: string;
     } & DefaultSession["user"];
   }
+  interface CallbacksOptions {
+    cookies: CustomCookies; // This adds the 'cookies' property to CallbacksOptions
+  }
 }
 
 declare module "next-auth/jwt" {
@@ -21,6 +23,17 @@ declare module "next-auth/jwt" {
     id: string;
     email: string;
   }
+}
+
+interface CustomCookies {
+  callbackUrl: {
+    name: string;
+    options: {
+      sameSite: string;
+      path: string;
+      secure: boolean;
+    };
+  };
 }
 
 export const authOptions: NextAuthOptions = {
@@ -45,7 +58,7 @@ export const authOptions: NextAuthOptions = {
         },
       });
       if (db_user) {
-        token.id = db_user.id
+        token.id = db_user.id;
       }
       return token;
     },
@@ -57,6 +70,16 @@ export const authOptions: NextAuthOptions = {
         session.user.image = token.picture;
       }
       return session;
+    },
+    cookies: {
+      callbackUrl: {
+        name: "__Secure-next-auth.callback-url",
+        options: {
+          sameSite: "lax",
+          path: "/",
+          secure: false,
+        },
+      },
     },
   },
 };
